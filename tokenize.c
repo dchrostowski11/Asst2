@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define ORIGINAL_SIZE 50
+#define ORIGINAL_SIZE 255
 
 struct node {
 	char * string;
