@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define ORIGINAL_SIZE 255
+#define ORIGINAL_SIZE 1000
 
 struct node {
 	char * string;
@@ -50,9 +50,11 @@ struct node *insert(struct node *newNode, struct node *head){
 
 	return head;
 }
-
-
-//THIS IS AN ALPHABETICAL TOKENIZER
+			
+	
+			
+		
+//TOKENIZES IN ALPHABETICAL ORDER
 /*
 struct node *Insert(struct node *newNode, struct node *head){
 	
@@ -95,11 +97,14 @@ struct node *Insert(struct node *newNode, struct node *head){
 	prev->next = tmp;
 	return head;
 }
-*/			
+
+*/
+			
 
 
 int curr = 0;
 //int len = 0;
+
 
 int main(int argc, char **argv){
 	FILE *fp = NULL;
@@ -107,9 +112,10 @@ int main(int argc, char **argv){
 	char *str; 
 	str = (char*)malloc(sizeof(char) * ORIGINAL_SIZE);
 	
-	printf("one byte in str: %d\n", (int)sizeof(str));
-	printf("ORIGINAL_SIZE = %d\n", ORIGINAL_SIZE);
-	printf("str size %d\n", (int)(sizeof(str) * ORIGINAL_SIZE));
+	//printf("one byte in str: %d\n", (int)sizeof(str));
+	//printf("ORIGINAL_SIZE = %d\n", ORIGINAL_SIZE);
+	//printf("str size %d\n", (int)(sizeof(str) * ORIGINAL_SIZE));
+
 	
 	if(str == NULL){
 		printf("Memory allocation failed!\n");
@@ -133,22 +139,26 @@ int main(int argc, char **argv){
 	/* reads the file and stores the entire string inside an array,
 	   converting all uppercase to lowercase and changing any symbol
 	   to a '-' character */
-	int malloc_count = 0;   
+	//int malloc_count = 0;   
 	int counter = 0;
+	//int num_chars;
 	while(!feof(fp)){
 		fscanf(fp, "%c", &str[counter]);
 		
+		//num_chars = strlen(str) + 1;
+		//printf("char:%c\t%d\n",str[counter], num_chars);
 		/* Checks to see if size of str needs to be increased for file input */
-		malloc_count += 8;
-		printf("malloc count:%d\n", malloc_count);
+		//malloc_count++;
+		//printf("malloc count:%d\n", malloc_count);
 		
 		//int len = strlen(str);
 		//printf("len = %d\n", len);
-		if(malloc_count == sizeof(str)){
-			int new_size =  sizeof(str) * ORIGINAL_SIZE;
+		
+		/*if(malloc_count == num_chars){
+			int new_size =  num_chars + ORIGINAL_SIZE;
 			str = realloc(str, new_size);
-			continue;
-		} 
+			//continue;
+		} */
 		
 		if(str[counter] >= 65 && str[counter] <= 90){
 			str[counter] += 32;
@@ -158,8 +168,8 @@ int main(int argc, char **argv){
 			str[counter] = '-';
 		}
 		
-		//printf("%c  %d\t %d\n", str[counter], str[counter], counter);
 		
+		//printf("%c  %d\t %d\n", str[counter], str[counter], counter);
 		counter++;
 	}
 	
@@ -202,7 +212,7 @@ int main(int argc, char **argv){
 		newNode->string = malloc(sizeof(char) * (strlen(word) + 1));
 		strcpy(newNode->string, word);
 		
-		list = Insert(newNode, list);
+		list = insert(newNode, list);
 		
 
 		len = 0;
