@@ -21,10 +21,42 @@ void printList(struct node * list){
 	free(list);
 }
 
-
-struct node Insert(struct node *newNode, struct node *head){
+//TOKENIZES IN ORDER THE APPEARS IN FILE
+struct node *insert(struct node *newNode, struct node *head){
+	// If LL is empty, create a head and fill w/ string value
+	if(head == NULL){
+		head = (struct node *) malloc(sizeof(struct node));
+		head->string = malloc(sizeof(char) * (strlen(newNode->string) + 1));
+		strcpy(head->string, newNode->string);
+		head->next = NULL;
+		return head;
+	} else {
 	
-	/* If LL is empty, create a head and fill in w/ string*/
+	//struct node * prev = head;
+	
+	struct node *tmp = malloc(sizeof(struct node));
+	tmp->string = malloc(sizeof(char) * (strlen(newNode->string) + 1));
+	strcpy(tmp->string, newNode->string);
+	
+	struct node * ptr = head;
+	
+	while(ptr->next != NULL){	
+		ptr = ptr->next;
+	}
+	ptr->next = tmp;
+	
+	return head;
+	}
+
+	return head;
+}
+
+
+//THIS IS AN ALPHABETICAL TOKENIZER
+/*
+struct node *Insert(struct node *newNode, struct node *head){
+	
+	// If LL is empty, create a head and fill in w/ string
 	if(head == NULL){
 		head = (struct node *) malloc(sizeof(struct node));
 		head->string = malloc(sizeof(char) * (strlen(newNode->string) + 1));
@@ -63,7 +95,7 @@ struct node Insert(struct node *newNode, struct node *head){
 	prev->next = tmp;
 	return head;
 }
-			
+*/			
 
 
 int curr = 0;
