@@ -194,6 +194,9 @@ int main(int argc, char** argv){
 			}
 		}
 	}
+	
+	fclose(file);
+	
 	//Go into the hash table and sort everything by file and word into the text file that was specified as the first argument. 
 	
 	struct word_nodes * temp = word_list;
@@ -213,8 +216,25 @@ int main(int argc, char** argv){
 		fprintf(output_file, "</word>\n");
 	}
 	fprintf(output_file, "</fileIndex>");	
-
+	
+	fclose(output_file);
 	closedir(dr);
+	
+	fp = fopen(file_to_write_to, "r"); 
+	if(fp == NULL){
+		printf("cannot open file\n");
+		exit(0);
+	}
+	
+	c = fgetc(fp);
+	while(c != EOF){
+		printf("%c", c);
+		c = fgetc(fp);
+		
+	}
+	
+	fclose(fp);
+	
     return 0;
     
 }
