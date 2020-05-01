@@ -1,0 +1,157 @@
+//
+//  index.c
+//  
+//
+//  Created by Liz on 3/19/18.
+//
+//
+
+#include "index.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <dirent.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+struct node * hash_table[1000];
+struct file_name * fileLL;
+int size = 1;
+int isFile(char * path){
+
+	struct stat s;
+	if(stat(path, &s) != 0) return 0;
+	return S_ISREG(s.st_mode);
+
+
+}
+
+int hash(char* word){
+	int hash = 0x5555555;
+	
+	while(*word){
+		hash ^= *word++;
+	}		
+	return hash;
+}
+void insert_fileLL(char* file_name){
+
+
+}
+void insert(char* value, char* file_name){
+	int key = abs(hash(value) % size);
+
+	if(hash_table[key] == NULL){
+		struct node* newNode = (struct node*) malloc(sizeof(struct node));
+		newNode->word = value;
+		newNode->amount = 1;
+		newNode->file_name = file_name;
+		newNode->next = NULL;
+		hash_table[key] = newNode;
+		size++;
+	}else if(strcmp(hash_table[key]->word, value) == 0 && strcmp(hash_table[key]->file_name, file_name) == 0){
+		hash_table[key]->amount++;
+	}else if(strcmp(hash_table[key]->word, value) == 0 && strcmp(hash_table[key]->file_name, file_name) != 0){
+		struct node* temp = hash_table[key];
+		int file_is_present = 0;
+		while(temp->next != NULL){
+			if(strcmp(temp->file_name, file_name)==0){
+				temp->amount++;
+				file_is_present = 1;
+				break;
+			}
+
+			temp = temp->next;
+		}
+
+		if(file_is_present == 0){
+			struct node * newNode = (struct node*) malloc(sizeof(struct node));
+			newNode->word = value;
+			newNode->amount = 1;
+			newNode->file_name = file_name;
+			newNode->next = hash_table[key];
+			hash_table[key] = newNode; 
+		}
+
+	}else{
+		struct node* newNode = (struct node*) malloc(sizeof(struct node));
+		newNode->word = value;
+		newNode->amount = 1;
+		hash_table[key] = newNode;
+		size++;
+	}	
+} 
+
+int main(int argc, char** argv){
+	struct dirent *de;
+	char* file_buf; 
+	FILE* file, *output_file;
+	if(argc!=3){
+		printf("Error. Invalid number of inputs.\n");
+		exit(0);
+	}
+	char * file_to_write_to = argv[1];
+	output_file = fopen(file_to_write_to, "w");
+
+	if(!output_file){
+		perror("Error\n");
+		exit(0);
+	}
+	fprintf(output_file, "<?xml version= \"1.0\" encoding=\"UTF-8\"?>\n<fileIndex>\n\t");
+	
+	char* path = argv[2];
+	if(path == NULL){
+		perror("Error");
+		exit(0);
+	}	
+
+	DIR *dr = opendir(path);
+	if(isFile(path) == 1){
+		file = fopen(path, "r");
+		if(file == NULL){
+			perror("Error");
+		}
+
+		while(!feof(file)){
+			file_buf = (char*) malloc(sizeof(char)*1000);
+			fscanf(file, "%s ", file_buf);
+			de = readdir(dr);
+			insert(file_buf, de->d_name);
+		}
+	}else{
+		char * file_name;
+		char * full_path;
+		while ((de = readdir(dr)) != NULL){
+			if (!strcmp (de->d_name, ".")){
+				continue;
+			}
+			if (!strcmp (de->d_name, "..")){
+				continue;
+			}
+			file_name = de->d_name;
+	//		printf("FILE NAME: %s\n", file_name);
+			insert_fileLL(file_name);
+			full_path = (char*) malloc(sizeof(char)*strlen(file_name)*strlen(path));
+			strcpy(full_path, path);
+			strcat(full_path, "/");
+			strcat(full_path, file_name);
+			file = fopen(full_path, "r");
+		//	printf("THE FULL PATH IS: %s \n", full_path);
+			if(file == NULL){
+				perror("Error");
+				exit(0);
+			}
+
+			while(!feof(file)){
+				file_buf = (char*) malloc(sizeof(char*)*1000);
+				fscanf(file, "%s ", file_buf);
+				insert(file_buf, file_name);
+			}
+		}
+	}
+
+	//Go into the hash table and sort everything by file and word into the text file that was specified as the first argument. 
+    closedir(dr);
+    return 0;
+    
+}
